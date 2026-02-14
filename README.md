@@ -5,8 +5,9 @@ A simple web editor for creating and managing wildcard files like those used by 
 ## What it does
 
 - Edit YAML wildcard files in your browser
-- Visual editor with pattern helpers (no need to memorize syntax)
-- Live validation that catches errors as you type
+- Visual editor with pattern helpers (don't need to memorize syntax)
+- Validation that catches syntax errors, unbalanced braces, and common mistakes
+- - **NOTE** - The validation section is in need of more development
 - Test your wildcards and see sample outputs
 - Dark mode (because your eyes matter)
 
@@ -15,11 +16,3 @@ A simple web editor for creating and managing wildcard files like those used by 
 Just open `wildcard-editor.html` in your browser. No server, no install, no fuss.
 
 Import your existing YAML files or start fresh. When you're done, hit export and you're good to go.
-
-## Features
-
-- **Pattern Helper** - Quick buttons to insert common wildcard patterns
-- **Expression Tester** - See what your wildcards will actually generate
-- **Validation** - Catches syntax errors, unbalanced braces, and common mistakes
-- - **NOTE** - The validation section is in need of more development
-- **Dark Mode** - Easy on the eyes with Dracula theme
