@@ -21,4 +21,5 @@ Import your existing YAML files or start fresh. When you're done, hit export and
 - **Pattern Helper** - Quick buttons to insert common wildcard patterns
 - **Expression Tester** - See what your wildcards will actually generate
 - **Validation** - Catches syntax errors, unbalanced braces, and common mistakes
+- - **NOTE** - The validation section is in need of more development
 - **Dark Mode** - Easy on the eyes with Dracula theme
