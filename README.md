@@ -1,6 +1,6 @@
 # Wildcard Creator
 
-A simple web editor for creating and managing ComfyUI Impact Pack wildcard files.
+A simple web editor for creating and managing wildcard files like those used by ComfyUI-Impact-Pack.
 
 ## What it does
 
