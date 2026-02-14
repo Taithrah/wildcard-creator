@@ -1,0 +1,51 @@
+test:
+  # Test all wildcard features
+
+  # Basic weighted selection
+  basic-weighted:
+    - "{10::common option|1::rare option}"
+    - "{5::red|3::green|2::blue}"
+
+  # Multi-select with separator
+  multi-select:
+    - "{2$$, $$apple|banana|cherry|date}"
+    - "{1-3$$ and $$cat|dog|bird}"
+    - "{-2$$option1|option2|option3|option4}"
+
+  # Quantifier syntax
+  quantifiers:
+    - "2#__test/simple__"
+    - "3#__test/simple__ with text"
+    - "Repeat: 5#__test/simple__"
+
+  # Pattern matching wildcards
+  pattern-match:
+    - "__*/simple__"
+    - "Some __*/basic-weighted__ text"
+
+  # Nested selections
+  nested:
+    - "{outer1|{inner1|inner2}|outer2}"
+    - "A {big {red|blue} ball|small {green|yellow} cube}"
+
+  # Wildcard references
+  references:
+    - "A __test/simple__ example"
+    - "Multi-level __test/basic-weighted__ reference"
+
+  # Simple options for testing
+  simple:
+    - "option A"
+    - "option B"
+    - "option C"
+
+  # Test comments in options
+  with-comments:
+    - "# This is a comment line"
+    - "regular option 1"
+    - "regular option 2"
+
+  # Complex prompt like the sample
+  complex-prompt:
+    - >-
+      solo, {0.2::special effect, |}__test/simple__{0.01::, rare|, __test/multi-select__|, 2#__test/simple__}{0.25::, {-2$$, $$__test/basic-weighted__|__test/nested__}|}

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Impact Wildcard YAML Editor</title>
+  <link rel="stylesheet" href="data/styles.css" />
+</head>
+
+<body>
+  <header>
+    <h1>Impact Wildcard YAML Editor</h1>
+    <button id="themeToggle" class="theme-toggle" title="Toggle dark mode">
+      <span class="theme-icon sun">☀️</span>
+      <span class="theme-icon moon">🌙</span>
+    </button>
+    <div class="toolbar">
+      <input id="fileInput" type="file" accept=".yaml,.yml" hidden />
+      <button id="importBtn">Import YAML</button>
+      <button id="exportBtn" class="primary">Export YAML</button>
+      <button id="newBtn">New File</button>
+      <button id="rawViewBtn" class="secondary">Raw YAML</button>
+      <button id="validationBtn" class="validation-tab">
+        Validation
+        <span id="validationBadge" class="validation-badge" style="display: none;">0</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel editor-panel">
+      <div class="section-title">
+        <strong>Structure</strong>
+        <button id="addGroupBtn">Add Group</button>
+      </div>
+      <div id="tree" class="tree"></div>
+      <p class="hint">Groups are the top-level keys in your YAML.</p>
+    </section>
+
+    <section class="panel">
+      <div id="formView" class="form-view active">
+        <div class="section-title">
+          <strong id="editorTitle">Select a group or key</strong>
+          <div class="editor-actions" id="editorActions"></div>
+        </div>
+        <div id="editorBody"></div>
+        <div class="status" id="formStatus"></div>
+      </div>
+
+      <div id="rawView" class="raw-view">
+        <div class="section-title">
+          <strong>Raw YAML</strong>
+          <div class="editor-actions">
+            <button id="applyRawBtn">Apply to Form</button>
+          </div>
+        </div>
+        <textarea id="rawTextarea" rows="24" spellcheck="false"></textarea>
+        <div class="status" id="rawStatus"></div>
+      </div>
+
+      <div id="validationView" class="raw-view">
+        <div class="section-title">
+          <strong>Validation Results</strong>
+        </div>
+        <div class="validation-summary">
+          <div class="validation-stat">
+            <span class="validation-stat-label">Errors</span>
+            <span class="validation-stat-value error" id="errorCount">0</span>
+          </div>
+          <div class="validation-stat">
+            <span class="validation-stat-label">Warnings</span>
+            <span class="validation-stat-value warning" id="warningCount">0</span>
+          </div>
+          <div class="validation-stat">
+            <span class="validation-stat-label">Info</span>
+            <span class="validation-stat-value info" id="infoCount">0</span>
+          </div>
+          <div class="validation-stat">
+            <span class="validation-stat-label">Total Items</span>
+            <span class="validation-stat-value" id="totalCount">0</span>
+          </div>
+        </div>
+        <div class="filter-buttons">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="error">Errors</button>
+          <button class="filter-btn" data-filter="warning">Warnings</button>
+          <button class="filter-btn" data-filter="info">Info</button>
+        </div>
+        <div id="validationList" class="validation-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="data/js-yaml.min.js"></script>
+  <script src="data/app.js"></script>
+</body>
+
+</html>
