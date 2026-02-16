@@ -260,15 +260,15 @@ class WildcardValidator {
       }
       this.validateWeightedOption(option, path, `{${content}}`);
     });
-    
-      const commaLeadingOptions = options.filter(option => option.trim().startsWith(','));
-      if (commaLeadingOptions.length > 0) {
-        this.addIssue('warning', path,
-          'Options start with commas',
-          'Leading commas can create double commas when combined with surrounding text',
-          `{${content}}`
-        );
-      }
+
+    const commaLeadingOptions = options.filter(option => option.trim().startsWith(','));
+    if (commaLeadingOptions.length > 0) {
+      this.addIssue('warning', path,
+        'Options start with commas',
+        'Leading commas can create double commas when combined with surrounding text',
+        `{${content}}`
+      );
+    }
   }
 
   validateWeightedOption(option, path, context) {
@@ -317,7 +317,7 @@ class WildcardValidator {
   checkWildcardReferences(text, path) {
     const wildcardPattern = /__([^_]|_(?!_))+__/g;
     const matches = text.match(wildcardPattern);
-    
+
     if (!matches) return;
 
     matches.forEach(match => {
@@ -420,10 +420,10 @@ class WildcardValidator {
     const start = Math.max(0, position - contextLength);
     const end = Math.min(text.length, position + contextLength);
     let context = text.substring(start, end);
-    
+
     if (start > 0) context = '...' + context;
     if (end < text.length) context = context + '...';
-    
+
     return context;
   }
 
@@ -492,7 +492,7 @@ const runValidation = () => {
   errorCount.textContent = counts.errors;
   warningCount.textContent = counts.warnings;
   infoCount.textContent = counts.info;
-  
+
   const countItems = (obj) => {
     let count = 0;
     if (Array.isArray(obj)) {
@@ -513,17 +513,17 @@ const navigateToIssue = (path) => {
   // Parse the path string to get the selectedPath array
   // Path format: "group → key → [0]" or "group → key"
   const pathParts = path.split(' → ').filter(part => part.trim());
-  
+
   // Remove array indices from path parts (e.g., [0], [1])
   const cleanPath = pathParts.filter(part => !part.match(/^\[\d+\]$/));
-  
+
   if (cleanPath.length > 0) {
     // Set the selected path
     state.selectedPath = cleanPath;
-    
+
     // Switch to form view
     showFormView();
-    
+
     // Render everything
     renderAll();
   }
@@ -546,46 +546,46 @@ const renderValidationList = () => {
   }
 
   validationList.innerHTML = '';
-  
+
   filtered.forEach(issue => {
     const itemDiv = document.createElement('div');
     itemDiv.className = `validation-item ${issue.severity}`;
-    
+
     // Create header with navigate button
     const header = document.createElement('div');
     header.className = 'validation-item-header';
-    
+
     const messageSpan = document.createElement('span');
     const icon = issue.severity === 'error' ? '✕' : issue.severity === 'warning' ? '⚠' : 'ℹ';
     messageSpan.innerHTML = `${icon} ${issue.message}`;
-    
+
     const navBtn = document.createElement('button');
     navBtn.className = 'validation-nav-btn';
     navBtn.textContent = '→ Go to';
     navBtn.title = 'Navigate to this item';
     navBtn.onclick = () => navigateToIssue(issue.path);
-    
+
     header.appendChild(messageSpan);
     header.appendChild(navBtn);
     itemDiv.appendChild(header);
-    
+
     // Add other content
     const pathDiv = document.createElement('div');
     pathDiv.className = 'validation-item-path';
     pathDiv.textContent = issue.path;
     itemDiv.appendChild(pathDiv);
-    
+
     const suggestionDiv = document.createElement('div');
     suggestionDiv.textContent = issue.suggestion;
     itemDiv.appendChild(suggestionDiv);
-    
+
     if (issue.context) {
       const contextDiv = document.createElement('div');
       contextDiv.className = 'validation-item-suggestion';
       contextDiv.textContent = issue.context;
       itemDiv.appendChild(contextDiv);
     }
-    
+
     validationList.appendChild(itemDiv);
   });
 };
@@ -679,18 +679,18 @@ const deleteNode = (path) => {
 const addGroup = () => {
   const name = prompt("Group name?");
   if (!name) return;
-  
+
   const trimmedName = name.trim();
   if (!trimmedName) {
     setStatus(formStatusEl, "Group name cannot be empty.", true);
     return;
   }
-  
+
   if (state.data[trimmedName]) {
     setStatus(formStatusEl, "Group already exists.", true);
     return;
   }
-  
+
   state.data[trimmedName] = {};
   state.selectedPath = [trimmedName];
   renderAll();
@@ -700,21 +700,21 @@ const addGroup = () => {
 const addKey = () => {
   const node = getNode(state.selectedPath);
   if (!node || typeof node !== "object" || Array.isArray(node)) return;
-  
+
   const name = prompt("Key name?");
   if (!name) return;
-  
+
   const trimmedName = name.trim();
   if (!trimmedName) {
     setStatus(formStatusEl, "Key name cannot be empty.", true);
     return;
   }
-  
+
   if (node[trimmedName]) {
     setStatus(formStatusEl, "Key already exists.", true);
     return;
   }
-  
+
   node[trimmedName] = [];
   state.selectedPath = [...state.selectedPath, trimmedName];
   renderAll();
@@ -732,7 +732,7 @@ const addItem = () => {
 const togglePatternPalette = (input, wrapper) => {
   // Remove any existing palette
   document.querySelectorAll('.pattern-palette').forEach(p => p.remove());
-  
+
   // Create new palette
   const palette = document.createElement('div');
   palette.className = 'pattern-palette active';
@@ -743,7 +743,7 @@ const togglePatternPalette = (input, wrapper) => {
     </div>
     <div class="pattern-grid"></div>
   `;
-  
+
   const patterns = [
     { label: 'Wildcard', pattern: '__category__' },
     { label: 'Basic Choice', pattern: '{option1|option2|option3}' },
@@ -758,7 +758,7 @@ const togglePatternPalette = (input, wrapper) => {
     { label: 'Pattern Match', pattern: '__*/category__' },
     { label: 'Comment', pattern: '# comment' }
   ];
-  
+
   const grid = palette.querySelector('.pattern-grid');
   patterns.forEach(({ label, pattern }) => {
     const btn = document.createElement('button');
@@ -771,11 +771,11 @@ const togglePatternPalette = (input, wrapper) => {
     };
     grid.appendChild(btn);
   });
-  
+
   palette.querySelector('.pattern-palette-close').onclick = () => palette.remove();
-  
+
   wrapper.appendChild(palette);
-  
+
   // Close on click outside
   setTimeout(() => {
     const closeHandler = (e) => {
@@ -794,7 +794,7 @@ const insertAtCursor = (input, text) => {
   const value = input.value;
   input.value = value.substring(0, start) + text + value.substring(end);
   input.selectionStart = input.selectionEnd = start + text.length;
-  
+
   // Trigger input event to update data
   const event = new Event('input', { bubbles: true });
   input.dispatchEvent(event);
@@ -804,7 +804,7 @@ const generateSampleOutputs = (expression, maxSamples = 1) => {
   const samples = new Set();
   const maxAttempts = 50;
   let attempts = 0;
-  
+
   while (samples.size < maxSamples && attempts < maxAttempts) {
     attempts++;
     try {
@@ -816,7 +816,7 @@ const generateSampleOutputs = (expression, maxSamples = 1) => {
       break;
     }
   }
-  
+
   return Array.from(samples);
 };
 
@@ -981,33 +981,33 @@ const resolveSelection = (content, depth, maxDepth) => {
 const resolveWildcards = (text, depth, maxDepth) => {
   return text.replace(/__([^_]|_(?!_))+__/g, (match) => {
     const path = match.slice(2, -2);
-    
+
     // Normalize wildcard path (lowercase, forward slashes)
     const normalizedPath = path.toLowerCase().replace(/\\/g, '/');
     const pathParts = normalizedPath.split('/');
-    
+
     // Handle pattern matching for __*/name__
     if (normalizedPath.startsWith('*/')) {
       const baseName = normalizedPath.slice(2); // Remove '*/'
       const matchingNodes = [];
-      
+
       // Find all matching wildcards at any depth
       const findMatches = (obj, prefix = '') => {
         if (typeof obj === 'object' && obj !== null) {
           for (const key in obj) {
             const fullKey = prefix ? `${prefix}/${key}` : key;
             const normalizedKey = fullKey.toLowerCase();
-            
+
             // Match if key equals baseName or contains it in path
-            if (normalizedKey === baseName || 
-                normalizedKey.endsWith('/' + baseName) ||
-                normalizedKey.startsWith(baseName + '/') ||
-                normalizedKey.includes('/' + baseName + '/')) {
+            if (normalizedKey === baseName ||
+              normalizedKey.endsWith('/' + baseName) ||
+              normalizedKey.startsWith(baseName + '/') ||
+              normalizedKey.includes('/' + baseName + '/')) {
               if (Array.isArray(obj[key])) {
                 matchingNodes.push(...obj[key]);
               }
             }
-            
+
             // Recurse into nested objects
             if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
               findMatches(obj[key], fullKey);
@@ -1015,27 +1015,27 @@ const resolveWildcards = (text, depth, maxDepth) => {
           }
         }
       };
-      
+
       findMatches(state.data);
-      
+
       if (matchingNodes.length > 0) {
         const randomItem = matchingNodes[Math.floor(Math.random() * matchingNodes.length)] ?? '';
         return resolveExpression(randomItem, depth + 1, maxDepth);
       }
-      
+
       return '[wildcard not found]';
     }
-    
+
     // Try exact path lookup (case-insensitive)
     let node = state.data;
     let found = true;
-    
+
     for (const part of pathParts) {
       if (!node || typeof node !== 'object') {
         found = false;
         break;
       }
-      
+
       // Case-insensitive key lookup
       const matchingKey = Object.keys(node).find(k => k.toLowerCase() === part);
       if (matchingKey) {
@@ -1045,7 +1045,7 @@ const resolveWildcards = (text, depth, maxDepth) => {
         break;
       }
     }
-    
+
     // If exact match found and it's an array, select random item
     if (found && Array.isArray(node) && node.length > 0) {
       const randomItem = node[Math.floor(Math.random() * node.length)] ?? '';
@@ -1248,7 +1248,7 @@ const renderEditor = () => {
       const wrapper = document.createElement("div");
       wrapper.className = "list-item";
       wrapper.dataset.itemIndex = index;
-      
+
       const input = document.createElement("textarea");
       input.rows = 2;
       input.value = item ?? "";
@@ -1264,13 +1264,13 @@ const renderEditor = () => {
       };
 
       const controls = document.createElement("div");
-      
+
       const helperToggle = document.createElement("button");
       helperToggle.textContent = "🔧";
       helperToggle.className = "helper-toggle";
       helperToggle.title = "Pattern Helper";
       helperToggle.onclick = () => togglePatternPalette(input, wrapper);
-      
+
       const up = document.createElement("button");
       up.textContent = "Up";
       up.onclick = () => {
@@ -1301,7 +1301,7 @@ const renderEditor = () => {
       controls.appendChild(del);
       wrapper.appendChild(input);
       wrapper.appendChild(controls);
-      
+
       // Add expression tester
       const tester = document.createElement("div");
       tester.className = "expression-tester";
@@ -1313,7 +1313,7 @@ const renderEditor = () => {
         <div class="tester-combinations"></div>
       `;
       wrapper.appendChild(tester);
-      
+
       editorBodyEl.appendChild(wrapper);
     });
   } else if (node && typeof node === "object") {
