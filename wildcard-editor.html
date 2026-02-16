@@ -11,10 +11,6 @@
 <body>
   <header>
     <h1>Wildcard YAML Editor</h1>
-    <button id="themeToggle" class="theme-toggle" title="Toggle dark mode">
-      <span class="theme-icon sun">☀️</span>
-      <span class="theme-icon moon">🌙</span>
-    </button>
     <div class="toolbar">
       <input id="fileInput" type="file" accept=".yaml,.yml" hidden />
       <button id="importBtn">Import YAML</button>
@@ -24,6 +20,10 @@
       <button id="validationBtn" class="validation-tab">
         Validation
         <span id="validationBadge" class="validation-badge" style="display: none;">0</span>
+      </button>
+      <button id="themeToggle" class="theme-toggle" title="Toggle dark mode">
+        <span class="theme-icon sun">☀️</span>
+        <span class="theme-icon moon">🌙</span>
       </button>
     </div>
   </header>
