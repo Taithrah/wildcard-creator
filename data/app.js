@@ -885,7 +885,7 @@ const resolveSelection = (content, depth, maxDepth) => {
 
   if (multiselectParts.length >= 2) {
     const countSpec = multiselectParts[0].trim();
-    let separator = ', ';
+    let separator = ' ';
     let optionsPart = '';
 
     if (multiselectParts.length === 2) {
@@ -1131,15 +1131,7 @@ const resolveExpression = (expr, depth = 0, maxDepth = 10) => {
 };
 
 const processExpression = (expr) => {
-  const resolved = resolveExpression(expr, 0, 12);
-  const cleaned = resolved
-    .replace(/\{\}/g, '')
-    .replace(/\s+,/g, ',')
-    .replace(/,\s+/g, ', ')
-    .replace(/\s+([,:;])\s*$/, '')
-    .replace(/([,:;])\s*$/, '')
-    .trim();
-  return cleaned;
+  return resolveExpression(expr, 0, 12);
 };
 
 const updateExpressionTester = (input, wrapper) => {
