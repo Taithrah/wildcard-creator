@@ -246,9 +246,11 @@ class WildcardValidator {
         (emptyOptionIndices[0] === 0 || emptyOptionIndices[0] === options.length - 1);
 
       if (!hasSingleEdgeEmpty) {
-        this.addIssue('warning', path,
+        // Check if this might be intentional (e.g., {a||b} where empty is a valid choice)
+        const severity = emptyOptionIndices.length === 1 ? 'info' : 'warning';
+        this.addIssue(severity, path,
           'Selection contains empty options',
-          'Remove extra | separators or move the empty option to the edge if intentional',
+          'Empty options can be valid (selecting "nothing"), or may be unintentional extra | separators',
           `{${content}}`
         );
       }
@@ -261,13 +263,37 @@ class WildcardValidator {
       this.validateWeightedOption(option, path, `{${content}}`);
     });
 
+    // Check for comma-leading options (common in optional syntax like {, text|})
     const commaLeadingOptions = options.filter(option => option.trim().startsWith(','));
     if (commaLeadingOptions.length > 0) {
-      this.addIssue('warning', path,
-        'Options start with commas',
-        'Leading commas can create double commas when combined with surrounding text',
-        `{${content}}`
-      );
+      // Check if this is likely intentional optional syntax: {text,|} or {, text|}
+      const hasEmptyOption = emptyOptionIndices.length > 0;
+      const isOptionalPattern = hasEmptyOption && options.length === 2;
+      
+      // Check if most options have comma prefix (intentional formatting)
+      // Use >= 66% threshold to catch cases like {0.01::, text|, text2|, text3}
+      const commaRatio = commaLeadingOptions.length / nonEmptyOptions.length;
+      const isMostlyCommaFormatted = commaRatio >= 0.66;
+      
+      if (isOptionalPattern) {
+        this.addIssue('info', path,
+          'Optional syntax pattern detected',
+          'Pattern {, text|} or {text,|} creates optional comma-prefixed text',
+          `{${content}}`
+        );
+      } else if (isMostlyCommaFormatted) {
+        this.addIssue('info', path,
+          'Comma-prefix formatting detected',
+          'Most options start with comma for text separation - likely intentional formatting',
+          `{${content}}`
+        );
+      } else {
+        this.addIssue('warning', path,
+          'Options start with commas',
+          'Leading commas can create double commas when combined with surrounding text',
+          `{${content}}`
+        );
+      }
     }
   }
 
@@ -339,6 +365,16 @@ class WildcardValidator {
         );
       }
 
+      // Check for pattern matching syntax (*/name) - this is valid and doesn't need validation
+      if (reference.startsWith('*/')) {
+        this.addIssue('info', path,
+          'Pattern matching wildcard',
+          `__*/name__ matches any wildcard ending with "${reference.slice(2)}" at any depth`,
+          match
+        );
+        return;
+      }
+
       const pathParts = reference.split('/').filter(part => part.trim());
       if (!pathParts.length) return;
 
@@ -389,9 +425,9 @@ class WildcardValidator {
     // Back-to-back comma-leading optional segments (can produce ",," after expansion)
     const optionalCommaChain = text.match(/(\{[^{}]*?(::)?\s*,[^{}]*?\|\}\s*){2,}/);
     if (optionalCommaChain) {
-      this.addIssue('warning', path,
+      this.addIssue('info', path,
         'Adjacent comma-leading optionals detected',
-        'Back-to-back {, ...|} segments can expand to consecutive commas',
+        'Back-to-back {, ...|} segments can expand to consecutive commas - this may be intentional',
         optionalCommaChain[0]
       );
     }
