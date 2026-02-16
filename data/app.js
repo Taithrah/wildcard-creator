@@ -1145,20 +1145,25 @@ const processExpression = (expr) => {
 const updateExpressionTester = (input, wrapper) => {
   const tester = wrapper.querySelector('.expression-tester');
   if (!tester) return;
-  
+
   const combinations = tester.querySelector('.tester-combinations');
   const regenBtn = tester.querySelector('.tester-regen-btn');
-  const value = input.value.trim();
-  
-  // Only show tester if expression has wildcard syntax
-  if (!value || (!value.includes('{') && !value.includes('__'))) {
-    tester.classList.remove('active');
-    return;
-  }
-  
-  tester.classList.add('active');
-  
+
+  const shouldShowTester = (rawValue) => {
+    const trimmed = rawValue.trim();
+    return trimmed.length > 0 && (trimmed.includes('{') || trimmed.includes('__'));
+  };
+
   const generateAndDisplay = () => {
+    const value = input.value;
+    if (!shouldShowTester(value)) {
+      tester.classList.remove('active');
+      combinations.innerHTML = '';
+      return;
+    }
+
+    tester.classList.add('active');
+
     try {
       const samples = generateSampleOutputs(value, 1);
       if (samples.length > 0) {
@@ -1171,16 +1176,16 @@ const updateExpressionTester = (input, wrapper) => {
       combinations.innerHTML = '<div class="tester-combination" style="color: var(--danger);">Error processing expression</div>';
     }
   };
-  
-  // Set up regenerate button if not already set
-  if (regenBtn && !regenBtn.onclick) {
+
+  if (regenBtn) {
     regenBtn.onclick = (e) => {
       e.preventDefault();
       generateAndDisplay();
     };
   }
-  
-  generateAndDisplay();
+
+  // Defer so the input value is fully updated before sampling.
+  window.requestAnimationFrame(generateAndDisplay);
 };
 
 const renderTree = () => {
