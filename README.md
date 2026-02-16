@@ -5,11 +5,9 @@ A simple web editor for creating and managing wildcard files like those used by 
 ## What it does
 
 - Edit YAML wildcard files in your browser
-- Visual editor with pattern helpers (don't need to memorize syntax)
-- Validation that catches syntax errors, unbalanced braces, and common mistakes
-- - **NOTE** - The validation section is in need of more development
+- Visual editor with pattern helpers
+- Validation that catches common mistakes
 - Test your wildcards and see sample outputs
-- Dark mode (because your eyes matter)
 
 ## Installation
 
