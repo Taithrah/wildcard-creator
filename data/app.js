@@ -676,6 +676,46 @@ const deleteNode = (path) => {
   delete node[path[path.length - 1]];
 };
 
+const renameNode = (path) => {
+  if (!path.length) return;
+
+  const oldName = path[path.length - 1];
+  const newName = prompt(`Rename "${oldName}" to:`, oldName);
+
+  if (!newName || newName === oldName) return;
+
+  const trimmedName = newName.trim();
+  if (!trimmedName) {
+    setStatus(formStatusEl, "Name cannot be empty.", true);
+    return;
+  }
+
+  // Get the parent node
+  let parentNode = state.data;
+  for (let i = 0; i < path.length - 1; i += 1) {
+    parentNode = parentNode[path[i]];
+  }
+
+  // Check if new name already exists
+  if (parentNode[trimmedName]) {
+    setStatus(formStatusEl, "Name already exists.", true);
+    return;
+  }
+
+  // Rename by creating new key and deleting old one
+  parentNode[trimmedName] = parentNode[oldName];
+  delete parentNode[oldName];
+
+  // Update selected path
+  const newPath = [...path];
+  newPath[newPath.length - 1] = trimmedName;
+  state.selectedPath = newPath;
+
+  renderAll();
+  runValidation();
+  setStatus(formStatusEl, `Renamed to "${trimmedName}"`);
+};
+
 const addGroup = () => {
   const name = prompt("Group name?");
   if (!name) return;
@@ -1224,6 +1264,13 @@ const renderEditor = () => {
   const node = getNode(state.selectedPath);
   const title = state.selectedPath.join(" / ");
   editorTitleEl.textContent = title;
+
+  const renameBtn = document.createElement("button");
+  renameBtn.textContent = "Rename";
+  renameBtn.onclick = () => {
+    renameNode(state.selectedPath);
+  };
+  editorActionsEl.appendChild(renameBtn);
 
   const deleteBtn = document.createElement("button");
   deleteBtn.textContent = "Delete";
