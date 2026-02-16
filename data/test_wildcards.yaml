@@ -1,51 +1,282 @@
+# Comprehensive Impact Pack Wildcard Test Suite
+# Tests all features documented in Impact Pack wildcard system
+
 test:
-  # Test all wildcard features
+  # ============================================================
+  # 1. BASIC WILDCARD REFERENCES
+  # ============================================================
 
-  # Basic weighted selection
-  basic-weighted:
-    - "{10::common option|1::rare option}"
-    - "{5::red|3::green|2::blue}"
-
-  # Multi-select with separator
-  multi-select:
-    - "{2$$, $$apple|banana|cherry|date}"
-    - "{1-3$$ and $$cat|dog|bird}"
-    - "{-2$$option1|option2|option3|option4}"
-
-  # Quantifier syntax
-  quantifiers:
-    - "2#__test/simple__"
-    - "3#__test/simple__ with text"
-    - "Repeat: 5#__test/simple__"
-
-  # Pattern matching wildcards
-  pattern-match:
-    - "__*/simple__"
-    - "Some __*/basic-weighted__ text"
-
-  # Nested selections
-  nested:
-    - "{outer1|{inner1|inner2}|outer2}"
-    - "A {big {red|blue} ball|small {green|yellow} cube}"
-
-  # Wildcard references
-  references:
-    - "A __test/simple__ example"
-    - "Multi-level __test/basic-weighted__ reference"
-
-  # Simple options for testing
+  # Simple wildcard reference
   simple:
     - "option A"
     - "option B"
     - "option C"
 
-  # Test comments in options
-  with-comments:
-    - "# This is a comment line"
-    - "regular option 1"
-    - "regular option 2"
+  # Hierarchical wildcard (category/subcategory)
+  colors:
+    warm:
+      - "red"
+      - "orange"
+      - "yellow"
+    cool:
+      - "blue"
+      - "green"
+      - "purple"
 
-  # Complex prompt like the sample
+  # Case-insensitive matching test (Jewel = jewel)
+  jewel:
+    - "diamond"
+    - "ruby"
+    - "sapphire"
+    - "emerald"
+
+  # Wildcard reference examples
+  basic-reference:
+    - "A __test/simple__ item"
+    - "Color: __test/colors/warm__"
+    - "Gem: __test/jewel__"
+
+  # ============================================================
+  # 2. TRANSITIVE WILDCARDS (wildcards referencing wildcards)
+  # ============================================================
+
+  vehicle:
+    - "car"
+    - "bicycle"
+    - "motorcycle"
+
+  fruit:
+    - "apple"
+    - "banana"
+    - "cherry"
+
+  # Wildcards that reference other wildcards
+  transitive:
+    - "riding a __test/vehicle__"
+    - "eating a __test/fruit__"
+    - "__test/colors/warm__ __test/vehicle__"
+
+  # ============================================================
+  # 3. QUANTIFIERS (N#__wildcard__)
+  # ============================================================
+
+  quantifier-test:
+    - "2#__test/simple__"
+    - "3#__test/fruit__ in basket"
+    - "Repeat five times: 5#__test/colors/warm__"
+    - "Combined: 2#__test/vehicle__ and 3#__test/fruit__"
+
+  # ============================================================
+  # 4. PATTERN MATCHING (__*/name__)
+  # ============================================================
+
+  # Pattern matching at any depth
+  pattern-match:
+    - "__*/simple__"
+    - "Find any warm: __*/warm__"
+    - "Find any jewel: __*/jewel__"
+    - "Pattern test: __*/fruit__"
+
+  # ============================================================
+  # 5. COMMENTS
+  # ============================================================
+
+  with-comments:
+    - "# This is a comment line and should be ignored"
+    - "regular option 1"
+    - "# Another comment"
+    - "regular option 2"
+    - "inline text # this is NOT a comment, stays in output"
+
+  # ============================================================
+  # 6. BASIC DYNAMIC PROMPTS {a|b|c}
+  # ============================================================
+
+  basic-selection:
+    - "{red|blue|green} ball"
+    - "A {cat|dog|bird} is here"
+    - "{small|medium|large} size"
+
+  # ============================================================
+  # 7. WEIGHTED SELECTION {weight::option}
+  # ============================================================
+
+  weighted-selection:
+    - "{10::common|1::rare}"
+    - "{5::red|3::green|2::blue} paint"
+    - "{100::very common|10::uncommon|1::very rare} item"
+    - "{3::always|never} happens"
+
+  # ============================================================
+  # 8. MULTI-SELECT
+  # ============================================================
+
+  # Fixed count multi-select
+  multi-select-fixed:
+    - "{2$$apple|banana|cherry|date}"
+    - "{3$$, $$red|green|blue|yellow|orange}"
+
+  # Range multi-select (n1-n2)
+  multi-select-range:
+    - "{1-3$$ and $$cat|dog|bird|fish}"
+    - "{2-4$$, $$option1|option2|option3|option4|option5}"
+
+  # Negative range (-n means 1 to n)
+  multi-select-negative:
+    - "{-2$$item1|item2|item3|item4}"
+    - "{-3$$ or $$choice1|choice2|choice3|choice4|choice5}"
+
+  # Custom separators
+  multi-select-separator:
+    - "{2$$ and $$red|blue|green}"
+    - "{3$$; $$alpha|beta|gamma|delta}"
+    - "{1-2$$ or $$option A|option B|option C}"
+
+  # ============================================================
+  # 9. NESTED SELECTIONS
+  # ============================================================
+
+  nested-basic:
+    - "{outer1|{inner1|inner2}|outer3}"
+    - "A {big {red|blue} ball|small {green|yellow} cube}"
+
+  nested-complex:
+    - "{red {apple|cherry}|blue {plum|berry}|green melon}"
+    - "1{girl holding {blue pencil|red __test/fruit__|colorful __test/jewel__}|boy riding __test/vehicle__}"
+
+  # Deep nesting with weights
+  nested-weighted:
+    - "{10::{common|{5::very common|1::less common}}|1::rare}"
+    - "{big {5::red|3::blue|2::green} box|small {yellow|orange} container}"
+
+  # ============================================================
+  # 10. OPTIONAL SYNTAX {option,|}
+  # ============================================================
+
+  optional-test:
+    - "beautiful{, shiny|}"
+    - "tree{, in forest|}{, tall|}"
+    - "{red,|} flower{, blooming|}"
+    - "{__test/jewel__,|} ring"
+
+  # ============================================================
+  # 11. COMBINED FEATURES
+  # ============================================================
+
+  # Wildcards in selections
+  wildcard-in-selection:
+    - "{__test/fruit__|__test/vehicle__|__test/jewel__}"
+    - "A {red|blue} __test/simple__"
+    - "{10::__test/colors/warm__|1::__test/colors/cool__} theme"
+
+  # Multi-select with wildcards
+  multi-select-wildcard:
+    - "{2$$, $$__test/fruit__|__test/vehicle__|__test/jewel__|__test/colors/warm__}"
+    - "{1-3$$ and $$red|__test/simple__|blue|__test/fruit__}"
+
+  # Quantifiers in selections
+  quantifier-in-selection:
+    - "{2#__test/simple__|3#__test/fruit__|normal option}"
+    - "Items: {1-2$$2#__test/colors/warm__|3#__test/jewel__|single item}"
+
+  # ============================================================
+  # 12. COMPLEX REAL-WORLD TEST CASES
+  # ============================================================
+
+  # Complex prompt with multiple features
   complex-prompt:
     - >-
-      solo, {0.2::special effect, |}__test/simple__{0.01::, rare|, __test/multi-select__|, 2#__test/simple__}{0.25::, {-2$$, $$__test/basic-weighted__|__test/nested__}|}
+      solo, {0.2::special effect, |}__test/simple__{0.01::, rare event|, __test/multi-select-fixed__|, 2#__test/fruit__}{0.25::, {-2$$, $$__test/colors/warm__|__test/nested-basic__}|}
+
+  # Simulated detailed prompt
+  detailed-scene:
+    - >-
+      {1-3$$ and $$__test/colors/warm__|__test/colors/cool__} background,
+      {10::__test/simple__|1::__test/transitive__},
+      {quality setting,|}{3::detailed|1::ultra detailed|very detailed},
+      {-2$$, $$__test/jewel__|__test/fruit__|__test/vehicle__}
+
+  # Multi-layered transitive wildcards
+  deep-transitive:
+    - "__test/transitive__"
+    - "Scene: {__test/basic-reference__|__test/wildcard-in-selection__|__test/pattern-match__}"
+
+  # ============================================================
+  # 13. EDGE CASES & SPECIAL SYNTAX
+  # ============================================================
+
+  edge-cases:
+    # Empty option in selection
+    - "{option1||option3}"
+    # Single option (should pass through)
+    - "{only one option}"
+    # Wildcard with quantifier and weight
+    - "{5::3#__test/simple__|1::normal}"
+    # Multiple nested levels
+    - "{a|{b|{c|{d|e}}}}"
+    # Custom separator with range
+    - "{1-3$$ -> $$alpha|beta|gamma|delta|epsilon}"
+
+  # Unicode and special characters
+  unicode-test:
+    - "カタカナ character"
+    - "中文字符"
+    - "emoji 🌸🎨🔥"
+    - "Ñoño special ñ"
+
+  # Numbers and decimals in weights
+  numeric-weights:
+    - "{100::hundred|50::fifty|25::twenty-five|10::ten}"
+    - "{1::one|2::two|3::three|4::four}"
+
+  # ============================================================
+  # 14. MULTI-LEVEL YAML STRUCTURE
+  # ============================================================
+
+  astronomy:
+    celestial-bodies:
+      - "star"
+      - "planet"
+      - "moon"
+      - "asteroid"
+    phenomena:
+      - "eclipse"
+      - "meteor shower"
+      - "aurora"
+
+  nature:
+    weather:
+      - "sunny"
+      - "rainy"
+      - "cloudy"
+      - "snowy"
+    seasons:
+      - "spring"
+      - "summer"
+      - "autumn"
+      - "winter"
+
+  # References to deeply nested wildcards
+  deep-hierarchy:
+    - "__test/astronomy/celestial-bodies__ in __test/nature/weather__ weather"
+    - "During __test/nature/seasons__ we see __test/astronomy/phenomena__"
+
+  # ============================================================
+  # 15. STRESS TEST - MAXIMUM COMPLEXITY
+  # ============================================================
+
+  stress-test:
+    - >-
+      {10::common start|1::rare start},
+      {2-4$$ and $$__test/colors/warm__|__test/colors/cool__|__test/jewel__|__test/fruit__},
+      {0.5::with {3#__test/simple__|2#__test/vehicle__}|0.3::containing {-3$$, $$__test/astronomy/celestial-bodies__|__test/nature/weather__|__test/transitive__}|0.2::simple __*/simple__},
+      {beautiful,|}{detailed,|}{professional,|}photograph,
+      {5::high quality|3::best quality|ultra quality},
+      {-2$$, $$bokeh|dramatic lighting|soft focus|vibrant colors},
+      {realistic|photorealistic|hyperrealistic},
+      {1-2$$ in $$__test/nature/seasons__|__test/nature/weather__|morning|evening|night}
+
+  # Recursive-like structure
+  recursive-test:
+    - "{__test/nested-basic__|{__test/nested-complex__|__test/nested-weighted__}}"
+    - "{2$$__test/wildcard-in-selection__|__test/multi-select-wildcard__|normal text}"
