@@ -168,12 +168,32 @@ class WildcardValidator {
         return;
       }
 
-      if (options.some(option => !option.trim())) {
-        this.addIssue('warning', path,
-          'Multiselect contains empty options',
-          'Remove extra | separators',
+      const emptyOptionIndices = options
+        .map((option, index) => (option.trim() ? -1 : index))
+        .filter(index => index >= 0);
+      const nonEmptyOptions = options.filter(option => option.trim());
+
+      if (emptyOptionIndices.length > 0 && nonEmptyOptions.length === 0) {
+        this.addIssue('error', path,
+          'Multiselect has no usable options',
+          'Add at least one non-empty option',
           `{${content}}`
         );
+        return;
+      }
+
+      if (emptyOptionIndices.length > 0) {
+        const hasSingleEdgeEmpty =
+          emptyOptionIndices.length === 1 &&
+          (emptyOptionIndices[0] === 0 || emptyOptionIndices[0] === options.length - 1);
+
+        if (!hasSingleEdgeEmpty) {
+          this.addIssue('warning', path,
+            'Multiselect contains empty options',
+            'Remove extra | separators or move the empty option to the edge if intentional',
+            `{${content}}`
+          );
+        }
       }
 
       const trimmedOptions = options.filter(option => option.trim());
@@ -206,13 +226,36 @@ class WildcardValidator {
       return;
     }
 
-    options.forEach(option => {
-      if (!option.trim()) {
+    const emptyOptionIndices = options
+      .map((option, index) => (option.trim() ? -1 : index))
+      .filter(index => index >= 0);
+    const nonEmptyOptions = options.filter(option => option.trim());
+
+    if (emptyOptionIndices.length > 0 && nonEmptyOptions.length === 0) {
+      this.addIssue('error', path,
+        'Selection has no usable options',
+        'Add at least one non-empty option',
+        `{${content}}`
+      );
+      return;
+    }
+
+    if (emptyOptionIndices.length > 0) {
+      const hasSingleEdgeEmpty =
+        emptyOptionIndices.length === 1 &&
+        (emptyOptionIndices[0] === 0 || emptyOptionIndices[0] === options.length - 1);
+
+      if (!hasSingleEdgeEmpty) {
         this.addIssue('warning', path,
           'Selection contains empty options',
-          'Remove extra | separators',
+          'Remove extra | separators or move the empty option to the edge if intentional',
           `{${content}}`
         );
+      }
+    }
+
+    options.forEach(option => {
+      if (!option.trim()) {
         return;
       }
       this.validateWeightedOption(option, path, `{${content}}`);
@@ -350,26 +393,6 @@ class WildcardValidator {
         'Adjacent comma-leading optionals detected',
         'Back-to-back {, ...|} segments can expand to consecutive commas',
         optionalCommaChain[0]
-      );
-    }
-
-    // Double pipes
-    const doublePipe = text.match(/\|\|/);
-    if (doublePipe) {
-      this.addIssue('warning', path,
-        'Double pipe || found',
-        'Double pipes create empty option',
-        doublePipe[0]
-      );
-    }
-
-    // Trailing/leading pipes
-    const badPipe = text.match(/\{\s*\||\|\s*\}/);
-    if (badPipe) {
-      this.addIssue('warning', path,
-        'Pipe at beginning or end of selection',
-        'Leading/trailing pipes create empty options',
-        badPipe[0]
       );
     }
 
@@ -722,16 +745,18 @@ const togglePatternPalette = (input, wrapper) => {
   `;
   
   const patterns = [
-    { label: 'Optional Wildcard', pattern: '{__category__,|}' },
-    { label: 'Multi-select', pattern: '{2$$, $$opt1|opt2|opt3}' },
-    { label: 'Range Select', pattern: '{1-3$$opt1|opt2|opt3}' },
-    { label: 'Weighted', pattern: '{5::common|1::rare}' },
-    { label: 'Basic Choice', pattern: '{option1|option2|option3}' },
     { label: 'Wildcard', pattern: '__category__' },
-    { label: 'Pattern Match', pattern: '__category/*__' },
-    { label: 'Comment', pattern: '# comment' },
-    { label: 'Optional Text', pattern: '{text here,|}' },
-    { label: 'Repeat', pattern: '3#__wildcard__' }
+    { label: 'Basic Choice', pattern: '{option1|option2|option3}' },
+    { label: 'Weighted', pattern: '{5::common|1::rare}' },
+    { label: 'Multi-select', pattern: '{2$$opt1|opt2|opt3}' },
+    { label: 'Custom Separator', pattern: '{2$$ and $$opt1|opt2|opt3}' },
+    { label: 'Range Select', pattern: '{1-3$$opt1|opt2|opt3}' },
+    { label: 'Negative Range', pattern: '{-3$$opt1|opt2|opt3}' },
+    { label: 'Optional', pattern: '{option,|}' },
+    { label: 'Optional Wildcard', pattern: '{__category__,|}' },
+    { label: 'Repeat Wildcard', pattern: '3#__wildcard__' },
+    { label: 'Pattern Match', pattern: '__*/category__' },
+    { label: 'Comment', pattern: '# comment' }
   ];
   
   const grid = palette.querySelector('.pattern-grid');
@@ -1026,42 +1051,8 @@ const resolveWildcards = (text, depth, maxDepth) => {
       const randomItem = node[Math.floor(Math.random() * node.length)] ?? '';
       return resolveExpression(randomItem, depth + 1, maxDepth);
     }
-    
-    // Depth-agnostic fallback: try matching just the base name
-    if (!found && pathParts.length > 0) {
-      const baseName = pathParts[pathParts.length - 1];
-      const matchingNodes = [];
-      
-      const findMatches = (obj, prefix = '') => {
-        if (typeof obj === 'object' && obj !== null) {
-          for (const key in obj) {
-            const fullKey = prefix ? `${prefix}/${key}` : key;
-            const normalizedKey = fullKey.toLowerCase();
-            
-            if (normalizedKey === baseName || 
-                normalizedKey.endsWith('/' + baseName) ||
-                normalizedKey.startsWith(baseName + '/') ||
-                normalizedKey.includes('/' + baseName + '/')) {
-              if (Array.isArray(obj[key])) {
-                matchingNodes.push(...obj[key]);
-              }
-            }
-            
-            if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
-              findMatches(obj[key], fullKey);
-            }
-          }
-        }
-      };
-      
-      findMatches(state.data);
-      
-      if (matchingNodes.length > 0) {
-        const randomItem = matchingNodes[Math.floor(Math.random() * matchingNodes.length)] ?? '';
-        return resolveExpression(randomItem, depth + 1, maxDepth);
-      }
-    }
 
+    // No match found - return as-is (Impact Pack behavior for YAML)
     return '[wildcard not found]';
   });
 };
