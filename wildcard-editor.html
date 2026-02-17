@@ -93,7 +93,18 @@
   </main>
 
   <script src="data/js-yaml.min.js"></script>
-  <script src="data/app.js"></script>
+  <!-- Core utilities and state (no dependencies) -->
+  <script src="data/utils.js"></script>
+  <script src="data/state-manager.js"></script>
+  <!-- Validator and processors -->
+  <script src="data/validator.js"></script>
+  <script src="data/expression-processor.js"></script>
+  <!-- Data and UI management -->
+  <script src="data/yaml-manager.js"></script>
+  <script src="data/ui-renderer.js"></script>
+  <!-- Event handling and initialization -->
+  <script src="data/event-handlers.js"></script>
+  <script src="data/app-refactored.js"></script>
 </body>
 
 </html>

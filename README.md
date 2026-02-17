@@ -27,4 +27,4 @@ Just open `wildcard-editor.html` in your browser. No server, no install, no fuss
 
 Import your existing YAML files or start fresh. When you're done, hit export and you're good to go.
 
-![Wildcard Creator Demo](./data/SAMPLE.gif)
+![Wildcard Creator Demo](./assets/sample.gif)
