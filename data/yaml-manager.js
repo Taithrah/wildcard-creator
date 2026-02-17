@@ -1,6 +1,15 @@
 /**
  * YAML Manager
  * Handles YAML parsing and serialization
+ * 
+ * Dependencies (from global scope):
+ * - state (state-manager.js)
+ * - setStatus (utils.js)
+ * - jsyaml (js-yaml.min.js)
+ * 
+ * Parameters passed by caller:
+ * - renderAll (ui-renderer.js) - function to re-render UI
+ * - runValidation (app-refactored.js) - function to run validation
  */
 
 const loadYamlText = (text, formStatusEl, renderAll, runValidation) => {

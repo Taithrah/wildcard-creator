@@ -292,7 +292,9 @@ const updateExpressionTester = (input, wrapper) => {
         combinations.innerHTML = '<div class="tester-combination" style="color: var(--muted);">No variations detected</div>';
       }
     } catch (err) {
-      combinations.innerHTML = '<div class="tester-combination" style="color: var(--danger);">Error processing expression</div>';
+      // Provide more informative error messages
+      const errorMsg = err.message.includes('wildcard') ? 'Wildcard reference issue' : 'Error processing expression';
+      combinations.innerHTML = `<div class="tester-combination" style="color: var(--danger);">⚠ ${errorMsg}</div>`;
     }
   };
 

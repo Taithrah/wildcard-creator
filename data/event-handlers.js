@@ -160,6 +160,10 @@ const togglePatternPalette = (input, wrapper) => {
 };
 
 const setupEventListeners = () => {
+  // Guard against multiple initializations
+  if (window._listenerSetupComplete) return;
+  window._listenerSetupComplete = true;
+
   document.getElementById("addGroupBtn").onclick = addGroup;
   document.getElementById("rawViewBtn").onclick = showRawView;
   document.getElementById("validationBtn").onclick = showValidation;
