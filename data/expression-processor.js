@@ -76,7 +76,8 @@ const resolveSelection = (content, depth, maxDepth) => {
 
   const rawOptions = splitTopLevel(content, '|');
 
-  // Parse weights for all options (including single-option case)
+  // Parse weights for all options (including single-option and empty for optional syntax)
+  // Match Impact Pack behavior: process all options including empty strings
   const weightedOptions = rawOptions.map(option => {
     const weightParts = splitTopLevel(option, '::');
     if (weightParts.length === 2 && /^\s*\d+(\.\d+)?\s*$/.test(weightParts[0])) {
@@ -93,7 +94,11 @@ const resolveSelection = (content, depth, maxDepth) => {
     };
   });
 
-  // Keep empty options for optional syntax {text,|}
+  // Don't filter empty options - they're valid for optional syntax like {text,|}
+  // This matches Impact Pack behavior where empty options can be selected
+  const totalWeight = weightedOptions.reduce((sum, opt) => sum + opt.weight, 0);
+  if (totalWeight <= 0) return '';
+
   return chooseWeighted(weightedOptions);
 };
 
