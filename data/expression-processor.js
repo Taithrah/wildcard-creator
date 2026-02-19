@@ -39,21 +39,23 @@ const resolveSelection = (content, depth, maxDepth) => {
     }
 
     const rawOptions = splitTopLevel(optionsPart, '|');
-    const weightedOptions = rawOptions.map(option => {
-      const weightParts = splitTopLevel(option, '::');
-      if (weightParts.length === 2 && /^\s*\d+(\.\d+)?\s*$/.test(weightParts[0])) {
-        const weight = Math.max(0, parseFloat(weightParts[0].trim()));
-        return {
-          weight,
-          value: resolveExpression(weightParts[1], depth + 1, maxDepth)
-        };
-      }
+    const weightedOptions = rawOptions
+      .map(option => {
+        const weightParts = splitTopLevel(option, '::');
+        if (weightParts.length === 2 && /^\s*\d+(\.\d+)?\s*$/.test(weightParts[0])) {
+          const weight = Math.max(0, parseFloat(weightParts[0].trim()));
+          return {
+            weight,
+            value: resolveExpression(weightParts[1], depth + 1, maxDepth)
+          };
+        }
 
-      return {
-        weight: 1,
-        value: resolveExpression(option, depth + 1, maxDepth)
-      };
-    }).filter(option => option.value.trim().length > 0);
+        return {
+          weight: 1,
+          value: resolveExpression(option, depth + 1, maxDepth)
+        };
+      })
+      .filter(option => option.value.trim().length > 0);
 
     if (weightedOptions.length === 0) return '';
 
@@ -73,10 +75,8 @@ const resolveSelection = (content, depth, maxDepth) => {
   }
 
   const rawOptions = splitTopLevel(content, '|');
-  if (rawOptions.length === 1) {
-    return resolveExpression(rawOptions[0], depth + 1, maxDepth);
-  }
 
+  // Parse weights for all options (including single-option case)
   const weightedOptions = rawOptions.map(option => {
     const weightParts = splitTopLevel(option, '::');
     if (weightParts.length === 2 && /^\s*\d+(\.\d+)?\s*$/.test(weightParts[0])) {
@@ -93,6 +93,7 @@ const resolveSelection = (content, depth, maxDepth) => {
     };
   });
 
+  // Keep empty options for optional syntax {text,|}
   return chooseWeighted(weightedOptions);
 };
 

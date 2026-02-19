@@ -412,14 +412,24 @@ class WildcardValidator {
       );
     }
 
-    // Consecutive commas
+    // Consecutive commas - but allow if part of valid optional syntax
     const doubleComma = text.match(/,\s*,/);
     if (doubleComma) {
-      this.addIssue('warning', path,
-        'Consecutive commas found',
-        'Consecutive commas often mean an empty token; check optional segments',
-        doubleComma[0]
-      );
+      // Check if this could be from optional syntax expanding to empty
+      const doubleCommaIndex = text.indexOf(doubleComma[0]);
+      const contextBefore = text.substring(Math.max(0, doubleCommaIndex - 20), doubleCommaIndex);
+      const contextAfter = text.substring(doubleCommaIndex + doubleComma[0].length, Math.min(text.length, doubleCommaIndex + 30));
+      
+      // Suppress warning if surrounded by optional syntax patterns
+      const isInOptionalContext = /(\{[^{}]*?,\|[^{}]*?\}|\{[^{}]*\|\})/.test(contextBefore + doubleComma[0] + contextAfter);
+      
+      if (!isInOptionalContext) {
+        this.addIssue('warning', path,
+          'Consecutive commas found',
+          'Consecutive commas often mean an empty token; check optional segments',
+          doubleComma[0]
+        );
+      }
     }
 
     // Back-to-back comma-leading optional segments (can produce ",," after expansion)
