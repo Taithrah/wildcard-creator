@@ -52,7 +52,7 @@ const splitTopLevel = (input, delimiter) => {
 
 const parseCountSpec = (spec, maxOptions) => {
   const trimmed = spec.trim();
-  if (!trimmed) return 0;
+  if (!trimmed) {return 0;}
 
   // Handle negative range: -n means 0 to n (changed to 1 to n for Impact Pack compatibility)
   if (/^\s*-(\d+)\s*$/.test(trimmed)) {
@@ -68,7 +68,7 @@ const parseCountSpec = (spec, maxOptions) => {
     const min = Math.min(parseInt(rangeMatch[1], 10), maxOptions);
     const max = Math.min(parseInt(rangeMatch[2], 10), maxOptions);
     // Impact Pack handles min > max by returning min
-    if (max < min) return min;
+    if (max < min) {return min;}
     return min + Math.floor(Math.random() * (max - min + 1));
   }
 
@@ -83,12 +83,12 @@ const parseCountSpec = (spec, maxOptions) => {
 
 const chooseWeighted = (options) => {
   const totalWeight = options.reduce((sum, option) => sum + option.weight, 0);
-  if (totalWeight <= 0) return options[0]?.value ?? '';
+  if (totalWeight <= 0) {return options[0]?.value ?? '';}
   let roll = Math.random() * totalWeight;
 
   for (const option of options) {
     roll -= option.weight;
-    if (roll <= 0) return option.value;
+    if (roll <= 0) {return option.value;}
   }
 
   return options[options.length - 1]?.value ?? '';
@@ -113,9 +113,9 @@ const findDuplicateKeys = (text) => {
   const lines = text.split(/\r?\n/);
   lines.forEach((line, index) => {
     const clean = line.replace(/#.*$/, "");
-    if (!clean.trim()) return;
+    if (!clean.trim()) {return;}
     const match = clean.match(/^(\s*)([^:\s][^:]*?)\s*:/);
-    if (!match) return;
+    if (!match) {return;}
 
     const indent = match[1].length;
     const key = match[2].trim();

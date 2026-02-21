@@ -15,7 +15,7 @@ const state = {
 const getNode = (path) => {
   let node = state.data;
   for (const key of path) {
-    if (!node || typeof node !== "object") return null;
+    if (!node || typeof node !== "object") {return null;}
     node = node[key];
   }
   return node;
@@ -34,7 +34,7 @@ const setNode = (path, value) => {
 };
 
 const deleteNode = (path) => {
-  if (!path.length) return;
+  if (!path.length) {return;}
   let node = state.data;
   for (let i = 0; i < path.length - 1; i += 1) {
     node = node[path[i]];
@@ -43,12 +43,12 @@ const deleteNode = (path) => {
 };
 
 const renameNode = (path, formStatusEl, renderAll, runValidation) => {
-  if (!path.length) return;
+  if (!path.length) {return;}
 
   const oldName = path[path.length - 1];
   const newName = prompt(`Rename "${oldName}" to:`, oldName);
 
-  if (!newName || newName === oldName) return;
+  if (!newName || newName === oldName) {return;}
 
   const trimmedName = newName.trim();
   if (!trimmedName) {

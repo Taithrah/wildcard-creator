@@ -140,13 +140,13 @@ class WildcardValidator {
     const multiselectParts = splitTopLevel(content, '$$');
     if (multiselectParts.length >= 2) {
       const countSpec = multiselectParts[0].trim();
-      let separator = ', ';
+      let _separator = ', ';
       let optionsPart = '';
 
       if (multiselectParts.length === 2) {
         optionsPart = multiselectParts[1];
       } else {
-        separator = multiselectParts[1];
+        _separator = multiselectParts[1];
         optionsPart = multiselectParts.slice(2).join('$$');
       }
 
@@ -344,7 +344,7 @@ class WildcardValidator {
     const wildcardPattern = /__([^_]|_(?!_))+__/g;
     const matches = text.match(wildcardPattern);
 
-    if (!matches) return;
+    if (!matches) {return;}
 
     matches.forEach(match => {
       const reference = match.slice(2, -2);
@@ -376,7 +376,7 @@ class WildcardValidator {
       }
 
       const pathParts = reference.split('/').filter(part => part.trim());
-      if (!pathParts.length) return;
+      if (!pathParts.length) {return;}
 
       let node = state.data;
       for (const part of pathParts) {
@@ -467,8 +467,8 @@ class WildcardValidator {
     const end = Math.min(text.length, position + contextLength);
     let context = text.substring(start, end);
 
-    if (start > 0) context = '...' + context;
-    if (end < text.length) context = context + '...';
+    if (start > 0) {context = '...' + context;}
+    if (end < text.length) {context = context + '...';}
 
     return context;
   }

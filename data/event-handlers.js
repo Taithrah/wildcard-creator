@@ -5,7 +5,7 @@
 
 const addGroup = () => {
   const name = prompt("Group name?");
-  if (!name) return;
+  if (!name) {return;}
 
   const trimmedName = name.trim();
   if (!trimmedName) {
@@ -26,10 +26,10 @@ const addGroup = () => {
 
 const addKey = () => {
   const node = getNode(state.selectedPath);
-  if (!node || typeof node !== "object" || Array.isArray(node)) return;
+  if (!node || typeof node !== "object" || Array.isArray(node)) {return;}
 
   const name = prompt("Key name?");
-  if (!name) return;
+  if (!name) {return;}
 
   const trimmedName = name.trim();
   if (!trimmedName) {
@@ -50,7 +50,7 @@ const addKey = () => {
 
 const addItem = () => {
   const node = getNode(state.selectedPath);
-  if (!Array.isArray(node)) return;
+  if (!Array.isArray(node)) {return;}
   node.push("");
   renderEditor(editorTitleEl, editorBodyEl, editorActionsEl, formStatusEl);
   runValidation();
@@ -161,7 +161,7 @@ const togglePatternPalette = (input, wrapper) => {
 
 const setupEventListeners = () => {
   // Guard against multiple initializations
-  if (window._listenerSetupComplete) return;
+  if (window._listenerSetupComplete) {return;}
   window._listenerSetupComplete = true;
 
   document.getElementById("addGroupBtn").onclick = addGroup;
@@ -179,7 +179,7 @@ const setupEventListeners = () => {
   });
 
   document.getElementById("applyRawBtn").onclick = () => {
-    if (!validateRaw(rawTextarea, rawStatusEl)) return;
+    if (!validateRaw(rawTextarea, rawStatusEl)) {return;}
     loadYamlText(rawTextarea.value, rawStatusEl, renderAll, runValidation);
   };
 
@@ -189,7 +189,7 @@ const setupEventListeners = () => {
 
   fileInput.onchange = (event) => {
     const file = event.target.files[0];
-    if(!file) return;
+    if(!file) {return;}
     const reader = new FileReader();
     reader.onload = () => {
       loadYamlText(reader.result, rawStatusEl, renderAll, runValidation);
@@ -208,7 +208,7 @@ const setupEventListeners = () => {
   };
 
   document.getElementById("newBtn").onclick = () => {
-    if (!confirm("Start a new file? Unsaved changes will be lost.")) return;
+    if (!confirm("Start a new file? Unsaved changes will be lost.")) {return;}
     state.data = {};
     state.selectedPath = [];
     renderAll();

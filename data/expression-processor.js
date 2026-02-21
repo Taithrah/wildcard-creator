@@ -15,7 +15,7 @@ const generateSampleOutputs = (expression, maxSamples = 1) => {
       if (result && result !== expression) {
         samples.add(result);
       }
-    } catch (e) {
+    } catch (_) {
       break;
     }
   }
@@ -57,7 +57,7 @@ const resolveSelection = (content, depth, maxDepth) => {
       })
       .filter(option => option.value.trim().length > 0);
 
-    if (weightedOptions.length === 0) return '';
+    if (weightedOptions.length === 0) {return '';}
 
     const count = parseCountSpec(countSpec, weightedOptions.length);
     const chosen = [];
@@ -66,7 +66,7 @@ const resolveSelection = (content, depth, maxDepth) => {
     for (let i = 0; i < count; i += 1) {
       const pickedValue = chooseWeighted(pool);
       const pickedIndex = pool.findIndex(option => option.value === pickedValue);
-      if (pickedIndex === -1) break;
+      if (pickedIndex === -1) {break;}
       chosen.push(pickedValue);
       pool.splice(pickedIndex, 1);
     }
@@ -97,7 +97,7 @@ const resolveSelection = (content, depth, maxDepth) => {
   // Don't filter empty options - they're valid for optional syntax like {text,|}
   // This matches Impact Pack behavior where empty options can be selected
   const totalWeight = weightedOptions.reduce((sum, opt) => sum + opt.weight, 0);
-  if (totalWeight <= 0) return '';
+  if (totalWeight <= 0) {return '';}
 
   return chooseWeighted(weightedOptions);
 };
@@ -227,7 +227,7 @@ const resolveBraces = (text, depth, maxDepth) => {
 };
 
 const resolveExpression = (expr, depth = 0, maxDepth = 10) => {
-  if (depth > maxDepth) return expr;
+  if (depth > maxDepth) {return expr;}
   let result = expr;
 
   // Process quantifiers first (like Impact Pack)

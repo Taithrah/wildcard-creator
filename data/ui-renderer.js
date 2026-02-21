@@ -113,7 +113,7 @@ const renderEditor = (editorTitleEl, editorBodyEl, editorActionsEl, formStatusEl
       const up = document.createElement("button");
       up.textContent = "Up";
       up.onclick = () => {
-        if (index === 0) return;
+        if (index === 0) {return;}
         [node[index - 1], node[index]] = [node[index], node[index - 1]];
         renderEditor(editorTitleEl, editorBodyEl, editorActionsEl, formStatusEl);
         runValidation();
@@ -121,7 +121,7 @@ const renderEditor = (editorTitleEl, editorBodyEl, editorActionsEl, formStatusEl
       const down = document.createElement("button");
       down.textContent = "Down";
       down.onclick = () => {
-        if (index === node.length - 1) return;
+        if (index === node.length - 1) {return;}
         [node[index + 1], node[index]] = [node[index], node[index + 1]];
         renderEditor(editorTitleEl, editorBodyEl, editorActionsEl, formStatusEl);
         runValidation();
@@ -173,7 +173,7 @@ const renderEditor = (editorTitleEl, editorBodyEl, editorActionsEl, formStatusEl
       input.type = "text";
       input.value = key;
       input.onchange = () => {
-        if (!input.value || input.value === key) return;
+        if (!input.value || input.value === key) {return;}
         if (node[input.value]) {
           setStatus(formStatusEl, "Key already exists.", true);
           input.value = key;
@@ -202,7 +202,7 @@ const renderEditor = (editorTitleEl, editorBodyEl, editorActionsEl, formStatusEl
 
 const renderValidationList = (validationList) => {
   const filtered = state.validationIssues.filter(issue => {
-    if (state.validationFilter === 'all') return true;
+    if (state.validationFilter === 'all') {return true;}
     return issue.severity === state.validationFilter;
   });
 
@@ -263,7 +263,7 @@ const renderValidationList = (validationList) => {
 
 const updateExpressionTester = (input, wrapper) => {
   const tester = wrapper.querySelector('.expression-tester');
-  if (!tester) return;
+  if (!tester) {return;}
 
   const combinations = tester.querySelector('.tester-combinations');
   const regenBtn = tester.querySelector('.tester-regen-btn');
